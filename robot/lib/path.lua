@@ -10,13 +10,13 @@ local path={}
 local rseq=0
 local sseq=0
 
-local path_server = "4607bbb5-fdb5-418c-b7f2-268e1c70646d"
+local path_server = "6806c4a5-9c2d-4810-8d69-6e22bbfc453b"
 
 local function updateSeq(seq)
   if (seq==1) then return 0 else return 1 end
 end
 
-  
+
 local function stopConn()
   tries = 0
   while (tries<5) do
@@ -40,17 +40,17 @@ local function startConn()
   modem.send(path_server,150,rseq,"handshake1")
   while true do
     t,_,s,port,dist,seq,payload = event.pull(5,"modem_message")
-    if (t==nil) then 
+    if (t==nil) then
       print("Failed handshake")
       return false
-      --stopConn() 
+      --stopConn()
     end
     if (payload=="handshake2") then
       sseq=seq
      break
     end
   end
-  while true do 
+  while true do
     modem.send(path_server,150,sseq,"handACK")
     t,_,s,port,dist,seq,payload = event.pull(5,"modem_message")
     if (t==nil) then print("ACK failed") stop() end
@@ -67,6 +67,10 @@ end
 function path.getPath(dest)
   if (not startConn()) then return nil end
   print("Sending "..sseq)
+  if not location then
+    print("Turtle is missing Navigation Upgrade! Aborting ...")
+    stopConn()
+    return nil
   local src = location.get()
   s_src = serial.serialize(src)
   s_dest = serial.serialize(dest)
@@ -89,7 +93,7 @@ function path.getPath(dest)
   stopConn()
   return nil
 end
- 
+
 
 function path.gotoPos(x,y,z)
   t=path.getPath({x,y,z})
@@ -97,7 +101,7 @@ function path.gotoPos(x,y,z)
   if (t~=nil) then
     os.execute("/home/cmd_list_execute "..serial.serialize(t))
     currentPos = location.get()
-    print(currentPos[1],currentPos[2],currentPos[3],x,y,z) 
+    print(currentPos[1],currentPos[2],currentPos[3],x,y,z)
     return (currentPos[1]==x and currentPos[2]==y and currentPos[3]==z)
   end
   return false

@@ -79,7 +79,7 @@ local function getBestMove(set,scores)
 end
 
 local function isValid(pt,map)
-  return (pt[1]>=-(boundary[1]) and pt[1]<=boundary[1] and pt[3]>-(boundary[2]) and pt[3]<boundary[2] and map[pt[1]][pt[3]][pt[2]]==0) 
+  return (pt[1]>=-(boundary[1]) and pt[1]<=boundary[1] and pt[3]>-(boundary[2]) and pt[3]<boundary[2] and map[pt[1]][pt[3]][pt[2]]==0)
 end
 
 local function getNeighbours(src,map)
@@ -133,7 +133,7 @@ local function a_star(src,dest)
   local g_score, f_score = {}, {}
   g_score[src] = 0
   f_score[src] = g_score[src] + heuristicDist(src,dest)
-  
+
   while (#open_set>0) do
     event.push("fake")
     event.pull()
@@ -145,7 +145,7 @@ local function a_star(src,dest)
     end
     search_and_delete(open_set,current)
     table.insert(closed_set,current)
-    for _,n in ipairs(getNeighbours(current,map3d)) do 
+    for _,n in ipairs(getNeighbours(current,map3d)) do
       if (notIn(closed_set,n)) then
         pot_g_score = g_score[current] + 1
         if (notIn(open_set,n)) then
